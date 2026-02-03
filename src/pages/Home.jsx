@@ -157,9 +157,9 @@ export default function Home() {
         description="JD Sols builds modern, mobile-optimized websites that generate real leads for local businesses. Free strategy call. Fast turnaround. Proven results."
       />
       
-      <div className="pt-16 lg:pt-20">
+      <div className="pt-12 lg:pt-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden py-20 lg:py-32">
+        <section className="relative overflow-hidden py-16 lg:py-28">
           <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-primary-500/5" />
           <div className="section-container relative">
             <div className="max-w-4xl">
