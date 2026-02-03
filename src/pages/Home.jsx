@@ -1,4 +1,5 @@
-import { FaBullseye, FaSearch, FaChartLine, FaTools, FaMapMarkerAlt, FaMobileAlt, FaTachometerAlt, FaEyeSlash, FaQuestionCircle } from 'react-icons/fa';
+import { useState, useRef, useEffect } from 'react';
+import { FaBullseye, FaSearch, FaChartLine, FaTools, FaMapMarkerAlt, FaMobileAlt, FaTachometerAlt, FaEyeSlash, FaQuestionCircle, FaChevronDown } from 'react-icons/fa';
 import Button from '../components/Button';
 import TestimonialCard from '../components/TestimonialCard';
 import ServiceCard from '../components/ServiceCard';
@@ -6,6 +7,10 @@ import FAQItem from '../components/FAQItem';
 import SEO from '../components/SEO';
 
 export default function Home() {
+  const [openProblem, setOpenProblem] = useState(null);
+  const [openService, setOpenService] = useState(null);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const testimonialScrollRef = useRef(null);
   const testimonials = [
     {
       name: 'Sarah Mitchell',
@@ -221,7 +226,52 @@ export default function Home() {
               </h2>
             </div>
             
-            <div className="relative">
+            {/* Mobile: Manual scroll carousel */}
+            <div className="lg:hidden">
+              <div 
+                ref={testimonialScrollRef}
+                className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 -mx-4"
+                onScroll={(e) => {
+                  const scrollLeft = e.target.scrollLeft;
+                  const width = e.target.offsetWidth;
+                  const index = Math.round(scrollLeft / width);
+                  setActiveTestimonial(index);
+                }}
+              >
+                {testimonials.map((testimonial, index) => (
+                  <div key={index} className="flex-shrink-0 w-full snap-center">
+                    <TestimonialCard {...testimonial} />
+                  </div>
+                ))}
+              </div>
+              
+              {/* Scroll indicators */}
+              <div className="flex justify-center gap-2 mt-6">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      const container = testimonialScrollRef.current;
+                      if (container) {
+                        container.scrollTo({
+                          left: container.offsetWidth * index,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      activeTestimonial === index 
+                        ? 'w-8 bg-primary-500' 
+                        : 'w-2 bg-gray-600 hover:bg-gray-500'
+                    }`}
+                    aria-label={`Go to testimonial ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            {/* Desktop: Auto-scroll carousel */}
+            <div className="hidden lg:block relative">
               <div className="flex gap-6 animate-scroll">
                 {/* First set of testimonials */}
                 {testimonials.map((testimonial, index) => (
@@ -253,54 +303,85 @@ export default function Home() {
               </p>
               
               <div className="space-y-4 mb-10">
-                <div className="bg-red-950/20 border-2 border-red-900/40 rounded-xl p-6 border-l-4 border-l-red-500 hover:border-red-500 hover:bg-red-950/30 transition-all shadow-lg shadow-red-900/20">
-                  <div className="flex items-start gap-3">
-                    <FaMobileAlt className="text-red-400 text-2xl mt-1 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-gray-100 mb-2">Terrible on Mobile</h3>
-                      <p className="text-gray-400">
-                        Over 70% of local searches happen on phones. If your site doesn't work perfectly on mobile, 
-                        you're invisible to most potential customers.
-                      </p>
+                {/* Mobile: Dropdown version */}
+                <div className="lg:hidden space-y-3">
+                  {[
+                    { icon: FaMobileAlt, title: 'Terrible on Mobile', text: "Over 70% of local searches happen on phones. If your site doesn't work perfectly on mobile, you're invisible to most potential customers." },
+                    { icon: FaTachometerAlt, title: 'Slow Loading = Lost Sales', text: "Customers leave if your site takes more than 3 seconds to load. Every second of delay costs you real money in lost conversions." },
+                    { icon: FaEyeSlash, title: 'Invisible on Google', text: "Poor SEO means you don't show up when people search for services in your area. Your competitors with better sites are taking those customers." },
+                    { icon: FaQuestionCircle, title: "No Idea What's Working", text: "Without proper tracking, you're throwing money at marketing with no clue if it's working. You can't improve what you don't measure." }
+                  ].map((problem, index) => (
+                    <div key={index} className="bg-red-950/20 border-2 border-red-900/40 rounded-xl border-l-4 border-l-red-500 overflow-hidden shadow-lg shadow-red-900/20">
+                      <button
+                        onClick={() => setOpenProblem(openProblem === index ? null : index)}
+                        className="w-full flex items-center justify-between p-4 text-left"
+                      >
+                        <div className="flex items-center gap-3">
+                          <problem.icon className="text-red-400 text-xl flex-shrink-0" />
+                          <h3 className="font-bold text-gray-100">{problem.title}</h3>
+                        </div>
+                        <FaChevronDown className={`text-red-400 transition-transform ${openProblem === index ? 'rotate-180' : ''}`} />
+                      </button>
+                      {openProblem === index && (
+                        <div className="px-4 pb-4">
+                          <p className="text-gray-400 text-sm">{problem.text}</p>
+                        </div>
+                      )}
                     </div>
-                  </div>
+                  ))}
                 </div>
                 
-                <div className="bg-red-950/20 border-2 border-red-900/40 rounded-xl p-6 border-l-4 border-l-red-500 hover:border-red-500 hover:bg-red-950/30 transition-all shadow-lg shadow-red-900/20">
-                  <div className="flex items-start gap-3">
-                    <FaTachometerAlt className="text-red-400 text-2xl mt-1 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-gray-100 mb-2">Slow Loading = Lost Sales</h3>
-                      <p className="text-gray-400">
-                        Customers leave if your site takes more than 3 seconds to load. Every second of delay 
-                        costs you real money in lost conversions.
-                      </p>
+                {/* Desktop: Full display */}
+                <div className="hidden lg:block space-y-4">
+                  <div className="bg-red-950/20 border-2 border-red-900/40 rounded-xl p-6 border-l-4 border-l-red-500 hover:border-red-500 hover:bg-red-950/30 transition-all shadow-lg shadow-red-900/20">
+                    <div className="flex items-start gap-3">
+                      <FaMobileAlt className="text-red-400 text-2xl mt-1 flex-shrink-0" />
+                      <div>
+                        <h3 className="font-bold text-gray-100 mb-2">Terrible on Mobile</h3>
+                        <p className="text-gray-400">
+                          Over 70% of local searches happen on phones. If your site doesn't work perfectly on mobile, 
+                          you're invisible to most potential customers.
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="bg-red-950/20 border-2 border-red-900/40 rounded-xl p-6 border-l-4 border-l-red-500 hover:border-red-500 hover:bg-red-950/30 transition-all shadow-lg shadow-red-900/20">
-                  <div className="flex items-start gap-3">
-                    <FaEyeSlash className="text-red-400 text-2xl mt-1 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-gray-100 mb-2">Invisible on Google</h3>
-                      <p className="text-gray-400">
-                        Poor SEO means you don't show up when people search for services in your area. Your 
-                        competitors with better sites are taking those customers.
-                      </p>
+                  
+                  <div className="bg-red-950/20 border-2 border-red-900/40 rounded-xl p-6 border-l-4 border-l-red-500 hover:border-red-500 hover:bg-red-950/30 transition-all shadow-lg shadow-red-900/20">
+                    <div className="flex items-start gap-3">
+                      <FaTachometerAlt className="text-red-400 text-2xl mt-1 flex-shrink-0" />
+                      <div>
+                        <h3 className="font-bold text-gray-100 mb-2">Slow Loading = Lost Sales</h3>
+                        <p className="text-gray-400">
+                          Customers leave if your site takes more than 3 seconds to load. Every second of delay 
+                          costs you real money in lost conversions.
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="bg-red-950/20 border-2 border-red-900/40 rounded-xl p-6 border-l-4 border-l-red-500 hover:border-red-500 hover:bg-red-950/30 transition-all shadow-lg shadow-red-900/20">
-                  <div className="flex items-start gap-3">
-                    <FaQuestionCircle className="text-red-400 text-2xl mt-1 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-gray-100 mb-2">No Idea What's Working</h3>
-                      <p className="text-gray-400">
-                        Without proper tracking, you're throwing money at marketing with no clue if it's working. 
-                        You can't improve what you don't measure.
-                      </p>
+                  
+                  <div className="bg-red-950/20 border-2 border-red-900/40 rounded-xl p-6 border-l-4 border-l-red-500 hover:border-red-500 hover:bg-red-950/30 transition-all shadow-lg shadow-red-900/20">
+                    <div className="flex items-start gap-3">
+                      <FaEyeSlash className="text-red-400 text-2xl mt-1 flex-shrink-0" />
+                      <div>
+                        <h3 className="font-bold text-gray-100 mb-2">Invisible on Google</h3>
+                        <p className="text-gray-400">
+                          Poor SEO means you don't show up when people search for services in your area. Your 
+                          competitors with better sites are taking those customers.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-red-950/20 border-2 border-red-900/40 rounded-xl p-6 border-l-4 border-l-red-500 hover:border-red-500 hover:bg-red-950/30 transition-all shadow-lg shadow-red-900/20">
+                    <div className="flex items-start gap-3">
+                      <FaQuestionCircle className="text-red-400 text-2xl mt-1 flex-shrink-0" />
+                      <div>
+                        <h3 className="font-bold text-gray-100 mb-2">No Idea What's Working</h3>
+                        <p className="text-gray-400">
+                          Without proper tracking, you're throwing money at marketing with no clue if it's working. 
+                          You can't improve what you don't measure.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -330,7 +411,41 @@ export default function Home() {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Mobile: Accordion version */}
+            <div className="md:hidden space-y-3 max-w-3xl mx-auto mb-8">
+              {services.map((service, index) => (
+                <div key={index} className="bg-dark-card border-2 border-dark-border rounded-xl overflow-hidden">
+                  <button
+                    onClick={() => setOpenService(openService === index ? null : index)}
+                    className="w-full flex items-center justify-between p-4 text-left hover:bg-dark-hover transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl text-primary-500">{service.icon}</div>
+                      <h3 className="font-bold text-gray-100 text-lg">{service.title}</h3>
+                    </div>
+                    <FaChevronDown className={`text-primary-500 transition-transform flex-shrink-0 ${openService === index ? 'rotate-180' : ''}`} />
+                  </button>
+                  {openService === index && (
+                    <div className="px-4 pb-4 border-t border-dark-border pt-4">
+                      <p className="text-gray-300 mb-4 text-sm leading-relaxed">{service.description}</p>
+                      {service.outcomes && service.outcomes.length > 0 && (
+                        <ul className="space-y-2">
+                          {service.outcomes.map((outcome, idx) => (
+                            <li key={idx} className="text-gray-400 text-sm flex items-start gap-2">
+                              <span className="text-primary-500 mt-0.5 flex-shrink-0">✓</span>
+                              <span>{outcome}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            {/* Desktop: Grid with cards */}
+            <div className="hidden md:grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {services.map((service, index) => (
                 <ServiceCard key={index} {...service} />
               ))}
@@ -360,15 +475,15 @@ export default function Home() {
               {process.map((step, index) => (
                 <div 
                   key={index} 
-                  className="bg-dark-card border border-dark-border rounded-xl p-8 mb-6 hover:border-primary-500/50 transition-all"
+                  className="bg-dark-card border border-dark-border rounded-xl p-4 lg:p-8 mb-4 lg:mb-6 hover:border-primary-500/50 transition-all"
                 >
-                  <div className="flex gap-6">
+                  <div className="flex gap-3 lg:gap-6">
                     <div className="flex-shrink-0">
-                      <div className="text-4xl font-bold text-primary-500/40">{step.number}</div>
+                      <div className="text-2xl lg:text-4xl font-bold text-primary-500/40">{step.number}</div>
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-100 mb-3">{step.title}</h3>
-                      <p className="text-gray-400 text-lg leading-relaxed">{step.description}</p>
+                      <h3 className="text-lg lg:text-2xl font-bold text-gray-100 mb-2 lg:mb-3">{step.title}</h3>
+                      <p className="text-gray-400 text-sm lg:text-lg leading-relaxed">{step.description}</p>
                     </div>
                   </div>
                 </div>
@@ -431,7 +546,7 @@ export default function Home() {
                 </Button>
               </div>
               
-              <div className="bg-dark-card border border-dark-border rounded-xl p-8 shadow-2xl">
+              <div className="hidden lg:block bg-dark-card border border-dark-border rounded-xl p-8 shadow-2xl">
                 <div className="mb-6">
                   <p className="text-sm font-semibold text-primary-400 mb-4 uppercase tracking-wider">Sample Monthly Report</p>
                   <div className="relative bg-primary-500 border-2 border-primary-600 rounded-xl p-6 mb-4 shadow-lg hover:shadow-2xl hover:shadow-primary-500/30 transition-all duration-300">
