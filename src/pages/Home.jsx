@@ -162,9 +162,9 @@ export default function Home() {
         description="JD Sols builds modern, mobile-optimized websites that generate real leads for local businesses. Free strategy call. Fast turnaround. Proven results."
       />
       
-      <div className="pt-12 lg:pt-16">
+      <div className="pt-6 lg:pt-8">
         {/* Hero Section */}
-        <section className="relative overflow-hidden py-16 lg:py-28">
+        <section className="relative overflow-hidden py-12 lg:py-24">
           <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-primary-500/5" />
           <div className="section-container relative">
             <div className="max-w-4xl">
@@ -175,7 +175,7 @@ export default function Home() {
                 <span className="inline-block px-4 py-2 bg-dark-card border border-primary-500/30 text-primary-500 text-sm font-medium rounded-full backdrop-blur-sm">
                   Mobile-First Design
                 </span>
-                <span className="inline-block px-4 py-2 bg-dark-card border border-primary-500/30 text-primary-500 text-sm font-medium rounded-full backdrop-blur-sm">
+                <span className="hidden lg:inline-block px-4 py-2 bg-dark-card border border-primary-500/30 text-primary-500 text-sm font-medium rounded-full backdrop-blur-sm">
                   2 Week Turnaround
                 </span>
               </div>
