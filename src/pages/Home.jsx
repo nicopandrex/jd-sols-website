@@ -203,12 +203,25 @@ export default function Home() {
                 </Button>
               </div>
               
-              <div className="bg-dark-card border-l-4 border-primary-500 rounded-r-lg p-6">
-                <p className="text-gray-300 leading-relaxed">
-                  <strong className="text-gray-100">Strategy call includes:</strong> Quick audit of your current site, 
-                  list of opportunities we see, suggested plan with timeline, and honest answers to your questions. 
-                  Zero pressure. If it's not a fit, we'll tell you.
-                </p>
+              <div className="mt-8">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-left">
+                  <div>
+                    <p className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-primary-500 leading-none">500+</p>
+                    <p className="text-gray-400 text-xs sm:text-sm lg:text-base mt-2">Leads Generated Monthly</p>
+                  </div>
+                  <div>
+                    <p className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-primary-500 leading-none">3x</p>
+                    <p className="text-gray-400 text-xs sm:text-sm lg:text-base mt-2">Average ROI Increase</p>
+                  </div>
+                  <div>
+                    <p className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-primary-500 leading-none">48hr</p>
+                    <p className="text-gray-400 text-xs sm:text-sm lg:text-base mt-2">Average Response Time</p>
+                  </div>
+                  <div>
+                    <p className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-primary-500 leading-none">100%</p>
+                    <p className="text-gray-400 text-xs sm:text-sm lg:text-base mt-2">Transparent Pricing</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -488,6 +501,12 @@ export default function Home() {
                   </div>
                 </div>
               ))}
+            </div>
+            
+            <div className="mt-12 text-center">
+              <Button to="/contact" variant="cta" size="lg">
+                Start the Process
+              </Button>
             </div>
           </div>
         </section>
